@@ -1,0 +1,5 @@
+token.txt
+person_service/node_modules
+complaint_service/node_modules
+insurance_service/node_modules
+user_ui/node_modules
