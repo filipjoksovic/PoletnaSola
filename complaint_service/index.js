@@ -53,7 +53,7 @@ app.post("/complaints", (req, res) => {
             var request = http.request({
                 host: 'localhost',
                 port: 5001,
-                path: '/complaint/' + req.body.complaint,
+                path: '/insurances/' + person._id,
                 method: 'GET',
                 headers: {
                     // headers such as "Cookie" can be extracted from req object and sent to /test
@@ -63,69 +63,30 @@ app.post("/complaints", (req, res) => {
                 response.setEncoding('utf8');
                 response.on('data', (chunk) => {
                     data += chunk;
-                    const Complaint  = JSON.parse(data);
-                    const insurance = new Insurance({
+                    const insurance = JSON.parse(data);
+                    const complaint = new Complaint({
                         person: person,
-                        complaint: Complaint
-                        insuranceType: req.body.insuranceType,
-                        validFrom: req.body.validFrom,
-                        validTo: req.body.validTo,
-                        vehicleRegistration: req.body.vehicleRegistration,
-                        vehicleType: req.body.vehicleType,
-                        vehiclePassed: req.body.vehiclePassed,
-                        numberOfSpeedingTickets: req.body.numberOfSpeedingTickets,
-                        numberOfDrunkDrivingTickets: req.body.numberOfDrunkDrivingTickets,
-                    });
-                    insurance.save((err, data) => {
-                        if (err) {
-                            res.send(err);
-                            return
-                        } else {
-                            res.send(data);
-                            return
-                        }
+                        insurance: insurance,
+                        dateFiled: new Date(),
+                        dateOccured: req.body.dateOccured,
+                        state: req.body.state,
+                        comment: req.body.comment
                     })
+                    complaint.save((err, complaint) => {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            res.send(complaint);
+                        }
+                    }
+                    )
+
                 });
-                // response.on('end', () => {
-                //     res.end('check result: ' + data);
-                // });
             });
             request.end();
-            const insurance = new Insurance({
-                person: JSON.parse(data),
-                insuranceType: req.body.insuranceType,
-                validFrom: req.body.validFrom,
-                validTo: req.body.validTo,
-                vehicleRegistration: req.body.vehicleRegistration,
-                vehicleType: req.body.vehicleType,
-                vehiclePassed: req.body.vehiclePassed,
-                numberOfSpeedingTickets: req.body.numberOfSpeedingTickets,
-                numberOfDrunkDrivingTickets: req.body.numberOfDrunkDrivingTickets,
-            });
-            insurance.save((err, data) => {
-                if (err) {
-                    res.send(err);
-                    return
-                } else {
-                    res.send(data);
-                    return
-                }
-            })
+          
         });
-        // response.on('end', () => {
-        //     res.end('check result: ' + data);
-        // });
     });
-    request.end();
-    const complaint = new Complaint({
-
-        dateFiled: req.body.dateFiled,
-        dateOccured: req.body.dateOccured,
-        state: req.body.state,
-        comment: req.body.comment,
-        person: req.body.person,
-    })
-    complaint.save();
     res.send("Complaint saved");
 })
 app.listen(5000, () => {
